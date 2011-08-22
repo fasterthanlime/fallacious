@@ -1,5 +1,6 @@
 
-# Insert coffee compiling instructions here
-# Insert JS uglifying instructions here
+# Insert coffee compiling commands here
+# Insert JS uglifying commands here
 
-# Insert CSS minifying instructions here
+# Insert LESS compiling commands here
+# Insert CSS minifying commands here
