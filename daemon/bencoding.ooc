@@ -1,38 +1,40 @@
-import io/Reader
-
-
-bdecode: func (r: Reader) -> BValue {
-}
-
+import io/Reader, structs/[HashMap, ArrayList]
 
 BValue: class {
-    print: func ~noTab { print("") }
-    print: abstract func (tab: String)
+    print: abstract func
 }
 
 BInt: class extends BValue {
     value := 0
-    print: func (tab: String) { tab print(); value toString() print() }
+    print: func { tab print(); value toString() print() }
 }
 
 BString: class extends BValue {
     value := ""
-    print: func (tab: String) { value print() }
+    print: func { value print() }
 }
 
 BDict: class extends BValue {
     map := HashMap<String, BValue> new()
-    print: func (tab: String) {
-	tab print(); '{' println()
-	newTab := tab + "  "
+    print: func {
+	"{ " print()
 	map each(|key, val|
-	    tab print(); key print(newTab); ': ' print(); val print(newTab); println()
+	    key print(); ": " print(); val print(); ", " print()
 	)
-	tab print(); '}' println()
+	" }" print()
     }
 }
 
-BList: 
+BList: class extends BValue {
+    list := ArrayList<BValue> new()
+    print: func {
+	"[ " print()
+	list each(|val|
+	    val print(); ", " print()
+	)
+	" ]" print()
+    }
+}
 
 BDecoder: class {
 
@@ -51,7 +53,14 @@ BDecoder: class {
 	    MalformedBencoding new('Expected i, got %c' format(first)) throw()
 	}
 	num := readUntil('e')
-	
+	BInt new(num toInt())	
+    }
+
+    readString: static func (r: Reader) -> BValue {
+	length := readUntil(':') toInt()
+	buffer := Buffer new(length)
+	r read(buffer data, 0, length)
+	BString new(buffer toString())
     }
 
 }
