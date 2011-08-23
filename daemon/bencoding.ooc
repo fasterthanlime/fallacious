@@ -1,12 +1,12 @@
 import io/Reader, structs/[HashMap, ArrayList]
 
-BValue: class {
+BValue: abstract class {
     print: abstract func
 }
 
 BInt: class extends BValue {
     value := 0
-    print: func { tab print(); value toString() print() }
+    print: func { value toString() print() }
 }
 
 BString: class extends BValue {
@@ -38,7 +38,7 @@ BList: class extends BValue {
 
 BDecoder: class {
 
-    read: static func (r: reader) -> BValue {
+    read: static func (r: Reader) -> BValue {
 	match(r peek()) {
 	    case 'i' => BDecoder readInt(r)
 	    case 'l' => BDecoder readList(r)
@@ -50,7 +50,7 @@ BDecoder: class {
     readInt: static func (r: Reader) -> BValue {
 	first := r read()
 	if (first != 'i') {
-	    MalformedBencoding new('Expected i, got %c' format(first)) throw()
+	    MalformedBencoding new("Expected i, got %c" format(first)) throw()
 	}
 	num := readUntil('e')
 	BInt new(num toInt())	
