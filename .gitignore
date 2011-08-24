@@ -3,3 +3,5 @@
 *.c
 *.swp
 ~*
+.libs
+*_tmp

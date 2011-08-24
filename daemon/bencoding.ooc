@@ -5,15 +5,23 @@ BValue: abstract class {
 }
 
 BInt: class extends BValue {
-    value := 0
+    value: LLong
     init: func (=value) {}
     print: func { value toString() print() }
 }
 
 BString: class extends BValue {
-    value := ""
+    value: String
     init: func (=value) {}
-    print: func { value print() }
+    print: func {
+	'"' print()
+	if (value length() < 128) {
+	    value print()
+	} else {
+	    "<binary data>" print()
+	}
+	'"' print()
+    }
 }
 
 BDict: class extends BValue {
@@ -59,13 +67,14 @@ BDecoder: class {
 	    MalformedBencoding new("Expected i, got %c" format(first)) throw()
 	}
 	num := r readUntil('e')
-	BInt new(num toInt())	
+	BInt new(num toLLong())	
     }
 
     readString: static func (r: Reader) -> BString {
 	length := r readUntil(':') toInt()
 	buffer := Buffer new(length)
 	r read(buffer data, 0, length)
+	buffer setLength(length)
 	BString new(buffer toString())
     }
 
