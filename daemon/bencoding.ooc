@@ -1,48 +1,62 @@
 import io/Reader, structs/[HashMap, ArrayList]
 
 BValue: abstract class {
-    print: abstract func
+    print: func { toString() print() }
+    toString: abstract func -> String
+
+    _: String {
+	get { toString() }
+    }
 }
 
 BInt: class extends BValue {
     value: LLong
     init: func (=value) {}
-    print: func { value toString() print() }
+    toString: func -> String { value toString() }
 }
 
 BString: class extends BValue {
     value: String
     init: func (=value) {}
-    print: func {
-	'"' print()
+    toString: func -> String {
+	sb := Buffer new()
+	sb append('"')
 	if (value length() < 128) {
-	    value print()
+	    sb append(value)
 	} else {
-	    "<binary data>" print()
+	    sb append("<binary value>")
 	}
-	'"' print()
+	sb append('"')
+	sb toString()
     }
 }
 
 BDict: class extends BValue {
     map := HashMap<String, BValue> new()
-    print: func {
-	"{ " print()
+    toString: func -> String {
+	sb := Buffer new()
+	sb append("{ ")
 	map each(|key, val|
-	    key print(); ": " print(); val print(); ", " print()
+	    sb append(key)
+	    sb append(": ")
+	    sb append(val toString())
+	    sb append(", ")
 	)
-	" }" print()
+	sb append(" }")
+	sb toString()
     }
 }
-
 BList: class extends BValue {
     list := ArrayList<BValue> new()
-    print: func {
-	"[ " print()
+    toString: func -> String {
+	sb := Buffer new()
+	sb append("[ ")
 	list each(|val|
-	    val print(); ", " print()
+	    sb append(val toString())
+	    sb append(", ")
 	)
-	" ]" print()
+	sb append(" ]")
+	sb toString()
     }
 }
 
@@ -112,3 +126,30 @@ BDecoder: class {
 	dict
     }
 }
+
+extend BValue {
+    each: func ~list (f: Func(BValue)) {
+	match this {
+	    case list: BList =>
+		list list each(f)
+	    case dict: BDict =>
+		dict map each(f) // dragons ahead: untested
+	    case =>
+		Exception new("Called each on %s: '%s'" format(class name, _)) throw()
+	}
+    }
+}
+
+operator [] (val: BValue, str: String) -> BValue {
+    match val {
+	case dict: BDict =>
+	    result := dict map get(str)
+	    if(!result) Exception new("Key '%s' not found in dict '%s'" format(str, val toString())) throw()
+	    result 
+	case =>
+	    Exception new("Using operator [] on non-dictionary '%s'" format(val toString())) throw()
+	    null
+    }
+}
+
+
