@@ -4,7 +4,7 @@
 
 Fall is water-related, so is torrent, so that's that.
 
-## Every torrent application ever sucks
+## Every torrent application ever is retarded
 
 Yes, there's libtorrent.
 
