@@ -3,9 +3,14 @@ import io/Reader, structs/[HashMap, ArrayList]
 BValue: abstract class {
     print: func { toString() print() }
     toString: abstract func -> String
+    toShorterString: func -> String { toString() }
 
     _: String {
 	get { toString() }
+    }
+
+    __: String {
+	get{ toShorterString() }
     }
 }
 
@@ -29,6 +34,7 @@ BString: class extends BValue {
 	sb append('"')
 	sb toString()
     }
+    toShorterString: func -> String { value }
 }
 
 BDict: class extends BValue {
@@ -131,11 +137,20 @@ extend BValue {
     each: func ~list (f: Func(BValue)) {
 	match this {
 	    case list: BList =>
-		list list each(f)
-	    case dict: BDict =>
-		dict map each(f) // dragons ahead: untested
+		// this is the kind of workaround I wish we didn't have to do
+		list list each(|v| f(v)) 
 	    case =>
-		Exception new("Called each on %s: '%s'" format(class name, _)) throw()
+		Exception new("Called each~list on %s: '%s'" format(class name, _)) throw()
+	}
+    }
+
+    each: func ~dict (f: Func(String, BValue)) {
+	match this {
+	    case dict: BDict =>
+		// this is the kind of workaround I wish we didn't have to do (bis)
+		dict map each(|k, v| f(k, v)) 
+	    case =>
+		Exception new("Called each~dict on %s: '%s'" format(class name, _)) throw()
 	}
     }
 }
