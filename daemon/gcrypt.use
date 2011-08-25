@@ -1,0 +1,3 @@
+Name: gcrypt
+Description: cryptology library
+Libs: -lgcrypt

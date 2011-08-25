@@ -53,6 +53,7 @@ BDict: class extends BValue {
 	sb toString()
     }
 }
+
 BList: class extends BValue {
     list := ArrayList<BValue> new()
     toString: func -> String {
