@@ -6,12 +6,13 @@ BValue: abstract class {
     toShorterString: func -> String { toString() }
 
     _: String {
-	get { toString() }
+	get{ toShorterString() }
     }
 
     __: String {
-	get{ toShorterString() }
+	get { toString() }
     }
+
 }
 
 BInt: class extends BValue {

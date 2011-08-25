@@ -9,10 +9,10 @@ i := 0
 torrent["announce-list"] each(|group|
     "  Group %d" printfln(i += 1)
     group each(|tracker|
-	"    %s" printfln(tracker __)
+	"    %s" printfln(tracker _)
     )
 )
 
-"Created by: %s" printfln(torrent["created by"] __)
-"Name: %s" printfln(info["name"] __)
+"Created by: %s" printfln(torrent["created by"] _)
+"Name: %s" printfln(info["name"] _)
 
