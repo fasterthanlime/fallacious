@@ -1,5 +1,5 @@
 import bencoding, io/FileReader
 
-BDecoder read(FileReader new("samples/War2BNE.torrent")) print()
+BDecoder new(FileReader new("samples/War2BNE.torrent")) read() print()
 println()
 

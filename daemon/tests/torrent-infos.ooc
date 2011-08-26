@@ -1,6 +1,6 @@
 import bencoding, io/FileReader
 
-torrent := BDecoder read(FileReader new("samples/War2BNE.torrent"))
+torrent := BDecoder new(FileReader new("samples/War2BNE.torrent")) read()
 
 info := torrent["info"]
 

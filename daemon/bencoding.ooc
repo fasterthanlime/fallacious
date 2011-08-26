@@ -74,16 +74,20 @@ MalformedBencoding: class extends Exception {
 
 BDecoder: class {
 
-    read: static func (r: Reader) -> BValue {
+    r: Reader
+
+    init: func (=r)
+
+    read: func -> BValue {
 	match(r peek()) {
-	    case 'i' => BDecoder readInt(r)
-	    case 'l' => BDecoder readList(r)
-	    case 'd' => BDecoder readDict(r)
-	    case     => BDecoder readString(r)
+	    case 'i' => readInt()
+	    case 'l' => readList()
+	    case 'd' => readDict()
+	    case     => readString()
 	}
     }
 
-    readInt: static func (r: Reader) -> BInt {
+    readInt: func -> BInt {
 	first := r read()
 	if (first != 'i') {
 	    MalformedBencoding new("Expected i, got %c" format(first)) throw()
@@ -92,7 +96,7 @@ BDecoder: class {
 	BInt new(num toLLong())	
     }
 
-    readString: static func (r: Reader) -> BString {
+    readString: func -> BString {
 	length := r readUntil(':') toInt()
 	buffer := Buffer new(length)
 	r read(buffer data, 0, length)
@@ -100,7 +104,7 @@ BDecoder: class {
 	BString new(buffer toString())
     }
 
-    readList: static func (r: Reader) -> BList {
+    readList: func -> BList {
 	first := r read()
 	if (first != 'l') {
 	    MalformedBencoding new("Expected l, got %c" format(first)) throw()
@@ -111,12 +115,12 @@ BDecoder: class {
 		r skip(1)
 		break
 	    }
-	    list list add(read(r))
+	    list list add(read())
 	}
 	list
     }
 
-    readDict: static func (r: Reader) -> BDict {
+    readDict: func -> BDict {
 	first := r read()
 	if (first != 'd') {
 	    MalformedBencoding new("Expected d, got %c" format(first)) throw()
@@ -127,8 +131,8 @@ BDecoder: class {
 		r skip(1)
 		break
 	    }
-	    key := readString(r)
-	    value := read(r)
+	    key := readString()
+	    value := read()
 	    dict map put(key value, value)
 	}
 	dict

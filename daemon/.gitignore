@@ -2,3 +2,4 @@ bencoding-to-json
 torrent-infos
 crypt
 sha1
+info-hash
