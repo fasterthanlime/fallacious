@@ -15,8 +15,9 @@ gcry_md_read: extern func (...) -> UChar*
 
 Hasher: class {
     hd: gcry_md_hd_t
+    algo: Algo
 
-    init: func (algo: Algo, flags := 0) {
+    init: func (=algo, flags := 0) {
 	gcry_md_open(hd&, algo, flags)
     }
 
@@ -24,7 +25,9 @@ Hasher: class {
 	gcry_md_write(hd, data, len)
     }
 
-    read: func (algo: Algo) -> UChar* {
+    read: func -> UChar* { read(algo) }
+
+    read: func ~algo (algo: Algo) -> UChar* {
 	gcry_md_read(hd, algo)	
     }
 }
